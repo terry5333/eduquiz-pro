@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { User, UserRole, Quiz } from './types';
 import { auth, db, doc, getDoc, setDoc, onAuthStateChanged, signOut } from './services/firebase';
-import LoginView from './components/LoginView';
-import TeacherDashboard from './components/TeacherDashboard';
-import StudentPortal from './components/StudentPortal';
-import StudentIdentification from './components/StudentIdentification';
-import QuizTaking from './components/QuizTaking';
-import Navbar from './components/Navbar';
+import LoginView from './components/LoginView.tsx';
+import TeacherDashboard from './components/TeacherDashboard.tsx';
+import StudentPortal from './components/StudentPortal.tsx';
+import StudentIdentification from './components/StudentIdentification.tsx';
+import QuizTaking from './components/QuizTaking.tsx';
+import Navbar from './components/Navbar.tsx';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -18,15 +17,12 @@ const App: React.FC = () => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
       if (firebaseUser) {
-        // Fetch extended user info from Firestore
         const userRef = doc(db, 'users', firebaseUser.uid);
         const userSnap = await getDoc(userRef);
         
         if (userSnap.exists()) {
           setUser(userSnap.data() as User);
         } else {
-          // If first time login, temporary role will be NONE until role is selected or recognized
-          // In this demo, we'll let users choose role in LoginView or logic
           const newUser: User = {
             id: firebaseUser.uid,
             name: firebaseUser.displayName || '未登錄同學',
