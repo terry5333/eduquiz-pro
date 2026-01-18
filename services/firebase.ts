@@ -1,5 +1,4 @@
-
-// Fix: Re-standardizing Firebase v9+ functional API imports
+// Re-standardizing Firebase v9+ functional API imports to resolve module export errors
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, where, orderBy, setDoc } from 'firebase/firestore';
@@ -13,7 +12,7 @@ const firebaseConfig = {
   appId: "1:8370075322:web:a015e7ceab83e527db7483"
 };
 
-// Fix: Initialize Firebase services using the standard functional API
+// Initialize Firebase services using the standard modular API
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
