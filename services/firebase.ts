@@ -1,7 +1,28 @@
-// Re-standardizing Firebase v9+ functional API imports to resolve module export errors
+
+// Use standard Firebase modular (v9+) imports to resolve potential module resolution issues
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, where, orderBy, setDoc } from 'firebase/firestore';
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signOut, 
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  doc, 
+  getDoc, 
+  getDocs, 
+  onSnapshot, 
+  query, 
+  where, 
+  orderBy, 
+  setDoc 
+} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKP-rD0yStry_OSMx1JUBXATXU-6yahoQ",
