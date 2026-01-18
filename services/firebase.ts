@@ -1,4 +1,6 @@
-// Standard modular Firebase v9+ imports for consistent module resolution
+
+// Fix: Use standard modular Firebase v9+ imports for consistent module resolution.
+// These imports are the standard for Firebase v9+ (Modular SDK).
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, where, orderBy, setDoc } from 'firebase/firestore';
