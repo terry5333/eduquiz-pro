@@ -1,76 +1,69 @@
-import { GoogleGenAI } from "@google/genai";
-import { Type } from "@google/genai";
+
+import { GoogleGenAI, Type } from "@google/genai";
 
 /**
- * Generates quiz questions based on a given topic using Gemini 3 Pro.
- * Returns an array of Question objects in JSON format.
+ * 使用 Gemini 3 Pro 生成測驗題目
  */
 export const generateQuizQuestions = async (topic: string, count: number = 5) => {
-  // Fix: Create a new GoogleGenAI instance right before making an API call to ensure it uses the most up-to-date API key
+  // Always use the direct process.env.API_KEY as per guidelines
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  // Use 'gemini-3-pro-preview' for complex reasoning tasks like educational content generation
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: `請針對主題「${topic}」生成 ${count} 題選擇題。請使用繁體中文（台灣）。每題應包含 id, text, options (4個選項), correctAnswerIndex (0-3), 和 explanation。`,
+      contents: `你是一位資深的教育專家。請針對主題「${topic}」生成 ${count} 題適合學生的選擇題。請使用繁體中文（台灣）。`,
       config: {
-        // Adding thinking budget for complex reasoning tasks as per guidelines
-        thinkingConfig: { thinkingBudget: 4096 },
+        thinkingConfig: { thinkingBudget: 4096 }, // 開啟思考模式以獲取更高質量的教育內容
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
           items: {
             type: Type.OBJECT,
             properties: {
-              id: { type: Type.STRING, description: "隨機生成的唯一識別碼" },
-              text: { type: Type.STRING, description: "題目文本" },
+              id: { type: Type.STRING },
+              text: { type: Type.STRING },
               options: {
                 type: Type.ARRAY,
-                items: { type: Type.STRING },
-                description: "四個選項的數組"
+                items: { type: Type.STRING }
               },
-              correctAnswerIndex: { type: Type.NUMBER, description: "正確答案的索引（0-3）" },
-              explanation: { type: Type.STRING, description: "簡單的答案解析" }
+              correctAnswerIndex: { type: Type.NUMBER },
+              explanation: { type: Type.STRING }
             },
-            // Use propertyOrdering instead of required in responseSchema
             propertyOrdering: ["id", "text", "options", "correctAnswerIndex", "explanation"]
           },
         },
       },
     });
 
-    // Fix: Access the .text property directly as a getter, not a method call
+    // Directly access the .text property from GenerateContentResponse
     const jsonStr = response.text;
-    if (!jsonStr) return [];
+    if (!jsonStr) throw new Error("AI 回傳內容為空");
     return JSON.parse(jsonStr.trim());
   } catch (err) {
-    console.error("Gemini Quiz Generation Error:", err);
-    return [];
+    console.error("Gemini 生成失敗:", err);
+    throw err;
   }
 };
 
 /**
- * Gets a detailed explanation for a specific question and answer pair.
+ * 針對特定題目獲取 AI 解析
  */
 export const getAnswerExplanation = async (question: string, answer: string) => {
-  // Fix: Create a new GoogleGenAI instance right before making an API call
+  // Always use the direct process.env.API_KEY as per guidelines
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  // Use 'gemini-3-pro-preview' for detailed educational explanations to ensure high quality
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: `請解釋為什麼在題目「${question}」中，「${answer}」是正確答案。請使用繁體中文，解釋要深入淺出且語氣親切。`,
+      contents: `請解釋在題目「${question}」中，為什麼「${answer}」是正確答案。請用鼓勵學生的語氣撰寫，並使用繁體中文。`,
       config: {
-        // Reasoning-heavy task, set a small thinking budget
         thinkingConfig: { thinkingBudget: 2048 }
       }
     });
-    // Fix: Access the .text property directly as a getter
+    // Directly access the .text property
     return response.text || "目前無法取得解析。";
   } catch (err) {
-    console.error("Gemini Explanation Error:", err);
-    return "解析生成失敗。";
+    console.error("Gemini 解析失敗:", err);
+    return "解析生成失敗，請稍後再試。";
   }
 };
