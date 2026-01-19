@@ -1,4 +1,6 @@
+
 // DO NOT add new files, classes, or namespaces.
+// Fix: Use the standard modular import for initializeApp from firebase/app
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
