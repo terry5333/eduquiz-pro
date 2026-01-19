@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserRole } from '../types';
 import { auth, googleProvider, signInWithPopup } from '../services/firebase';
@@ -18,8 +17,10 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
     } catch (error: any) {
       console.error("Login failed", error);
       
+      // 處理網域未授權錯誤
       if (error.code === 'auth/unauthorized-domain') {
-        setErrorMsg("此網域尚未被授權。請前往 Firebase 控制台 > Authentication > Settings > Authorized domains 將目前的網域加入白名單。");
+        const currentDomain = window.location.hostname;
+        setErrorMsg(`此網域 (${currentDomain}) 尚未在 Firebase 授權。請至 Firebase 控制台 > Authentication > Settings > Authorized domains 加入此網域。`);
       } else if (error.code === 'auth/popup-closed-by-user') {
         setErrorMsg("登入視窗已被關閉，請再試一次。");
       } else {
@@ -42,7 +43,7 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
         </div>
 
         {errorMsg && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-medium animate-fadeIn">
+          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-medium animate-fadeIn leading-relaxed">
             {errorMsg}
           </div>
         )}
