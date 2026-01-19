@@ -27,18 +27,18 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
           `1. 前往 Firebase Console (console.firebase.google.com)\n` +
           `2. 進入「Authentication」>「Settings」>「Authorized domains」\n` +
           `3. 點擊「Add domain」並填入：${currentDomain}\n` +
-          `4. 儲存後重新整理本頁面再試。`
+          `4. 儲存後，約等待 1 分鐘並重新整理本頁面再試一次。`
         );
       } else if (error.code === 'auth/network-request-failed') {
         setErrorMsg(
           `【錯誤：網路連線失敗】\n\n` +
-          `無法連線至 Firebase。這通常是因為：\n` +
-          `1. 您的網路不穩定。\n` +
-          `2. 廣告攔截外掛（如 AdBlock）阻擋了 Firebase 的 API。\n` +
-          `請檢查網路並嘗試暫時關閉攔截器。`
+          `無法連接至 Firebase。這通常是因為：\n` +
+          `1. 您的網路不穩定或中斷。\n` +
+          `2. 瀏覽器擴充功能（如 AdBlock 或隱私防護）阻擋了 Firebase 的請求。\n\n` +
+          `請檢查網路，或嘗試在「無痕視窗」中開啟，或暫時關閉廣告攔截器。`
         );
       } else if (error.code === 'auth/popup-closed-by-user') {
-        setErrorMsg("登入視窗已被關閉，請再試一次。");
+        setErrorMsg("登入視窗已被關閉，請重新點擊登入按鈕。");
       } else {
         setErrorMsg(`登入失敗 (${error.code})：\n${error.message || "發生未知錯誤"}`);
       }
