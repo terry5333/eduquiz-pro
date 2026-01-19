@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { User, Quiz, QuizAttempt } from '../types';
 import { db, collection, query, where, orderBy, onSnapshot, getDocs } from '../services/firebase';
@@ -22,6 +21,9 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ user, onStartQuiz }) => {
     const unsubscribeQuizzes = onSnapshot(qQuizzes, (snapshot) => {
       setAvailableQuizzes(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Quiz)));
       setLoading(false);
+    }, (err) => {
+      console.error("Quizzes sync error:", err);
+      setLoading(false);
     });
 
     // Fetch student's history
@@ -33,6 +35,8 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ user, onStartQuiz }) => {
     );
     const unsubscribeHistory = onSnapshot(qHistory, (snapshot) => {
       setHistory(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as QuizAttempt)));
+    }, (err) => {
+      console.error("History sync error:", err);
     });
 
     return () => {
@@ -43,14 +47,19 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ user, onStartQuiz }) => {
 
   const handleJoin = async () => {
     if (!code) return;
-    const q = query(collection(db, 'quizzes'), where('code', '==', code.toUpperCase()));
-    const snap = await getDocs(q);
-    
-    if (!snap.empty) {
-      setError('');
-      onStartQuiz({ id: snap.docs[0].id, ...snap.docs[0].data() } as Quiz);
-    } else {
-      setError('找不到此測驗代碼，請確認後再試。');
+    try {
+      const q = query(collection(db, 'quizzes'), where('code', '==', code.toUpperCase()));
+      const snap = await getDocs(q);
+      
+      if (!snap.empty) {
+        setError('');
+        onStartQuiz({ id: snap.docs[0].id, ...snap.docs[0].data() } as Quiz);
+      } else {
+        setError('找不到此測驗代碼，請確認後再試。');
+      }
+    } catch (err) {
+      console.error("Join quiz error:", err);
+      setError('連線發生錯誤。');
     }
   };
 
