@@ -1,12 +1,12 @@
 // DO NOT add new files, classes, or namespaces.
-import { initializeApp } from 'firebase/app';
+import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
   GoogleAuthProvider, 
   signInWithPopup, 
   signOut, 
   onAuthStateChanged 
-} from 'firebase/auth';
+} from "firebase/auth";
 import { 
   getFirestore, 
   collection, 
@@ -21,7 +21,7 @@ import {
   where, 
   orderBy, 
   setDoc 
-} from 'firebase/firestore';
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKP-rD0yStry_OSMx1JUBXATXU-6yahoQ",
@@ -35,7 +35,7 @@ const firebaseConfig = {
 /**
  * Initialize Firebase services using the standard modular API.
  */
-// Fix: Ensure initializeApp is imported correctly from 'firebase/app'
+// Fix: Correctly initialize the Firebase app using the named export from 'firebase/app'
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
