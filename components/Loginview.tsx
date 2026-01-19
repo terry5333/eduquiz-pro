@@ -8,9 +8,11 @@ interface LoginViewProps {
 
 const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = async (role: UserRole) => {
     setErrorMsg(null);
+    setIsLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
       onLogin(role);
@@ -21,21 +23,20 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
 
       if (error.code === 'auth/unauthorized-domain') {
         setErrorMsg(
-          `【權限錯誤：網域未授權】\n\n` +
-          `Firebase 拒絕來自「${currentDomain}」的登入要求。\n\n` +
+          `【 權限錯誤：網域未授權 】\n\n` +
           `請依照以下步驟修正：\n` +
-          `1. 前往 Firebase 控制台 (console.firebase.google.com)\n` +
+          `1. 前往 Firebase 控制台\n` +
           `2. 進入「Authentication」>「Settings」>「Authorized domains」\n` +
-          `3. 點擊「Add domain」並加入：${currentDomain}\n` +
-          `4. 儲存後，等待約 30 秒並重新整理此頁面。`
+          `3. 點擊「Add domain」並加入：\n   ${currentDomain}\n` +
+          `4. 儲存後等待 30 秒並重新整理此頁面。`
         );
-      } else if (error.code === 'auth/network-request-failed') {
-        setErrorMsg("網路連線失敗，請檢查網路或關閉廣告攔截器 (AdBlock) 後再試。");
       } else if (error.code === 'auth/popup-closed-by-user') {
-        setErrorMsg("登入視窗已被關閉。");
+        setErrorMsg("登入視窗已被關閉，請再試一次。");
       } else {
-        setErrorMsg(`登入失敗 (${error.code})：${error.message}`);
+        setErrorMsg(`登入失敗：${error.message}`);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,7 +62,8 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
         <div className="space-y-4">
           <button
             onClick={() => handleGoogleLogin(UserRole.TEACHER)}
-            className="w-full py-4 px-6 bg-slate-900 text-white rounded-2xl flex items-center justify-center gap-4 hover:bg-slate-800 transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-slate-200"
+            disabled={isLoading}
+            className="w-full py-4 px-6 bg-slate-900 text-white rounded-2xl flex items-center justify-center gap-4 hover:bg-slate-800 transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-slate-200 disabled:opacity-50"
           >
             <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="w-6 h-6 p-1 bg-white rounded-full" alt="Google" />
             <span className="font-black text-lg">教師身分登入</span>
@@ -69,15 +71,22 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
           
           <button
             onClick={() => handleGoogleLogin(UserRole.STUDENT)}
-            className="w-full py-4 px-6 bg-white border-2 border-slate-100 text-slate-900 rounded-2xl flex items-center justify-center gap-4 hover:border-indigo-500 transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-slate-100"
+            disabled={isLoading}
+            className="w-full py-4 px-6 bg-white border-2 border-slate-100 text-slate-900 rounded-2xl flex items-center justify-center gap-4 hover:border-indigo-500 transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-slate-100 disabled:opacity-50"
           >
             <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="w-6 h-6 p-1 bg-slate-50 rounded-full" alt="Google" />
             <span className="font-black text-lg">學生身分登入</span>
           </button>
         </div>
 
+        {isLoading && (
+          <div className="mt-6 text-indigo-600 font-black animate-pulse text-xs uppercase tracking-widest">
+            正在啟動安全驗證...
+          </div>
+        )}
+
         <p className="mt-10 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-          安全登入系統
+          Secure Login System
         </p>
       </div>
     </div>
