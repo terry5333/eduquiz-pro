@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { User, UserRole, Quiz } from './types';
 import { auth, db, doc, getDoc, setDoc, onAuthStateChanged, signOut } from './services/firebase';
-import LoginView from './components/LoginView.tsx';
-import TeacherDashboard from './components/TeacherDashboard.tsx';
-import StudentPortal from './components/StudentPortal.tsx';
-import StudentIdentification from './components/StudentIdentification.tsx';
-import QuizTaking from './components/QuizTaking.tsx';
-import Navbar from './components/Navbar.tsx';
+import LoginView from './components/LoginView';
+import TeacherDashboard from './components/TeacherDashboard';
+import StudentPortal from './components/StudentPortal';
+import StudentIdentification from './components/StudentIdentification';
+import QuizTaking from './components/QuizTaking';
+import Navbar from './components/Navbar';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
