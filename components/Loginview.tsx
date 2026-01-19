@@ -17,21 +17,37 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
     } catch (error: any) {
       console.error("Login failed", error);
       
-      // 處理網域未授權錯誤
+      const currentDomain = window.location.hostname;
+
       if (error.code === 'auth/unauthorized-domain') {
-        const currentDomain = window.location.hostname;
-        setErrorMsg(`此網域 (${currentDomain}) 尚未在 Firebase 授權。請至 Firebase 控制台 > Authentication > Settings > Authorized domains 加入此網域。`);
+        setErrorMsg(
+          `【錯誤：網域未授權】\n\n` +
+          `Firebase 拒絕來自「${currentDomain}」的登入要求。\n\n` +
+          `請依照以下步驟修正：\n` +
+          `1. 前往 Firebase Console (console.firebase.google.com)\n` +
+          `2. 進入「Authentication」>「Settings」>「Authorized domains」\n` +
+          `3. 點擊「Add domain」並填入：${currentDomain}\n` +
+          `4. 儲存後重新整理本頁面再試。`
+        );
+      } else if (error.code === 'auth/network-request-failed') {
+        setErrorMsg(
+          `【錯誤：網路連線失敗】\n\n` +
+          `無法連線至 Firebase。這通常是因為：\n` +
+          `1. 您的網路不穩定。\n` +
+          `2. 廣告攔截外掛（如 AdBlock）阻擋了 Firebase 的 API。\n` +
+          `請檢查網路並嘗試暫時關閉攔截器。`
+        );
       } else if (error.code === 'auth/popup-closed-by-user') {
         setErrorMsg("登入視窗已被關閉，請再試一次。");
       } else {
-        setErrorMsg("登入失敗：" + (error.message || "未知錯誤"));
+        setErrorMsg(`登入失敗 (${error.code})：\n${error.message || "發生未知錯誤"}`);
       }
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 px-4">
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl max-w-md w-full text-center border-4 border-white/20">
+      <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl max-w-md w-full text-center border-4 border-white/20 animate-fadeIn">
         <div className="mb-8">
           <div className="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-4 border-2 border-indigo-100">
             <svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,7 +59,7 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
         </div>
 
         {errorMsg && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-medium animate-fadeIn leading-relaxed">
+          <div className="mb-6 p-6 bg-red-50 border border-red-100 rounded-3xl text-red-600 text-sm font-medium animate-fadeIn whitespace-pre-line text-left leading-relaxed">
             {errorMsg}
           </div>
         )}
