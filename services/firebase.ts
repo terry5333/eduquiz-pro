@@ -35,6 +35,7 @@ const firebaseConfig = {
 /**
  * Initialize Firebase services using the standard modular API.
  */
+// Fix: Ensure initializeApp is imported correctly from 'firebase/app'
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
