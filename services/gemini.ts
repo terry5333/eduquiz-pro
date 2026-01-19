@@ -1,5 +1,5 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
+import { Type } from "@google/genai";
 
 /**
  * Generates quiz questions based on a given topic using Gemini 3 Pro.
@@ -15,6 +15,8 @@ export const generateQuizQuestions = async (topic: string, count: number = 5) =>
       model: 'gemini-3-pro-preview',
       contents: `請針對主題「${topic}」生成 ${count} 題選擇題。請使用繁體中文（台灣）。每題應包含 id, text, options (4個選項), correctAnswerIndex (0-3), 和 explanation。`,
       config: {
+        // Adding thinking budget for complex reasoning tasks as per guidelines
+        thinkingConfig: { thinkingBudget: 4096 },
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -38,7 +40,7 @@ export const generateQuizQuestions = async (topic: string, count: number = 5) =>
       },
     });
 
-    // Access the .text property directly as a getter, not a method call
+    // Fix: Access the .text property directly as a getter, not a method call
     const jsonStr = response.text;
     if (!jsonStr) return [];
     return JSON.parse(jsonStr.trim());
@@ -60,8 +62,12 @@ export const getAnswerExplanation = async (question: string, answer: string) => 
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: `請解釋為什麼在題目「${question}」中，「${answer}」是正確答案。請使用繁體中文，解釋要深入淺出且語氣親切。`,
+      config: {
+        // Reasoning-heavy task, set a small thinking budget
+        thinkingConfig: { thinkingBudget: 2048 }
+      }
     });
-    // Access the .text property directly as a getter
+    // Fix: Access the .text property directly as a getter
     return response.text || "目前無法取得解析。";
   } catch (err) {
     console.error("Gemini Explanation Error:", err);
