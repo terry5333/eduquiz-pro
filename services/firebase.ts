@@ -1,5 +1,4 @@
-
-// Use standard Firebase modular (v9+) imports to resolve potential module resolution issues
+// DO NOT add new files, classes, or namespaces.
 import { initializeApp } from 'firebase/app';
 import { 
   getAuth, 
@@ -33,7 +32,9 @@ const firebaseConfig = {
   appId: "1:8370075322:web:a015e7ceab83e527db7483"
 };
 
-// Initialize Firebase services using the standard modular API
+/**
+ * Initialize Firebase services using the standard modular API.
+ */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
